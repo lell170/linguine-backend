@@ -24,14 +24,16 @@ public class VocabularyService {
     private static final Random RANDOM = new Random();
     private static final String TRUE_WORDS = "^([^0-9$&+;=@#|“\"'<>^*.\\[\\]?!:()%-]){2,}([?!,.A-z{1}])$";
     private static final String LAST_CHARACTER_IS_SPECIFIC = "([^A-z])";
+    private final TranslationService translationService;
 
     private static final Logger logger = LoggerFactory.getLogger(VocabularyService.class);
 
     @Value("${ignore.file.path:var/ignore.txt}")
     private String ignoreFile;
 
-    public VocabularyService(final VocabularyRepository vocabularyRepository) {
+    public VocabularyService(final VocabularyRepository vocabularyRepository, final TranslationService translationService) {
         this.vocabularyRepository = vocabularyRepository;
+        this.translationService = translationService;
     }
 
     public void addNewWords(final Book book) {
@@ -76,9 +78,9 @@ public class VocabularyService {
         }
     }
 
-    public Vocabulary updateVocabulary(final Vocabulary vocabulary) {
+    public Vocabulary updateVocabulary(final Vocabulary vocabulary) throws IOException {
         if(!vocabulary.isKnow()) {
-            //TODO: add translation
+            translationService.translate(vocabulary);
         }
         return vocabularyRepository.save(vocabulary);
     }
