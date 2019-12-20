@@ -48,7 +48,7 @@ public class VocabularyController {
     @GetMapping("/vocabulary/random")
     @CrossOrigin(origins = "http://localhost:4200")
     public Vocabulary getRandomVocabulary() {
-        //TODO: handle empty list of vocabularies
-        return vocabularyService.getRandom().orElse(new Vocabulary());
+        //TODO: handle optional
+        return vocabularyService.getRandomTranslated().orElseGet(Vocabulary::new);
     }
 }

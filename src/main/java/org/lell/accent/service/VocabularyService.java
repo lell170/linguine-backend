@@ -3,13 +3,16 @@ package org.lell.accent.service;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import org.apache.commons.io.FileUtils;
+import org.checkerframework.checker.nullness.Opt;
 import org.lell.accent.model.Book;
 import org.lell.accent.model.Vocabulary;
 import org.lell.accent.repository.VocabularyRepository;
+import org.lell.accent.service.translation.TranslationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +37,45 @@ public class VocabularyService {
     public VocabularyService(final VocabularyRepository vocabularyRepository, final TranslationService translationService) {
         this.vocabularyRepository = vocabularyRepository;
         this.translationService = translationService;
+    }
+
+    public Optional<Vocabulary> getRandomTranslated() {
+        final Optional<Vocabulary> randomVocabulary = getRandomVocabulary();
+        if (randomVocabulary.isPresent() && !StringUtils.hasLength(randomVocabulary.get().getDe())) {
+            // recursive call if translation not found. (Java 9 "or" option)
+            return translationService.translate(randomVocabulary.get()).or(this::getRandomTranslated);
+        } else if (randomVocabulary.isPresent() && StringUtils.hasLength(randomVocabulary.get().getDe())) {
+            return randomVocabulary;
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Vocabulary> getRandomVocabulary() {
+        final ArrayList<Vocabulary> vocabularies = Lists.newArrayList(vocabularyRepository.findAll());
+        if (!vocabularies.isEmpty()) {
+            return vocabularies.stream()
+                               .skip(RANDOM.nextInt(vocabularies.size()))
+                               .findFirst();
+        }
+        return Optional.empty();
+    }
+
+    public Vocabulary updateVocabulary(final Vocabulary vocabulary) {
+        if (!vocabulary.isKnow()) {
+            translationService.translate(vocabulary);
+        }
+        return vocabularyRepository.save(vocabulary);
+    }
+
+    public void dropAndIgnore(final Vocabulary vocabulary) {
+        final File file = new File(ignoreFile);
+        try {
+            logger.info("vocabulary {} will be added to ignore list", vocabulary.getEn());
+            FileUtils.writeLines(file, Collections.singletonList(vocabulary.getEn()), true);
+        } catch (final IOException e) {
+            logger.error("error occurred while updating ignore file", e);
+        }
+        vocabularyRepository.delete(vocabulary);
     }
 
     public void addNewWords(final Book book) {
@@ -67,36 +109,4 @@ public class VocabularyService {
         return (List<Vocabulary>) vocabularyRepository.findAll();
     }
 
-    public Optional<Vocabulary> getRandom() {
-        final ArrayList<Vocabulary> vocabularies = Lists.newArrayList(vocabularyRepository.findAll());
-        if (!vocabularies.isEmpty()) {
-            return vocabularies.stream()
-                               .skip(RANDOM.nextInt(vocabularies.size()))
-                               .findFirst();
-        } else {
-            return Optional.empty();
-        }
-    }
-
-    public Vocabulary updateVocabulary(final Vocabulary vocabulary) throws IOException {
-        if(!vocabulary.isKnow()) {
-            translationService.translate(vocabulary);
-        }
-        return vocabularyRepository.save(vocabulary);
-    }
-
-    public Optional<Vocabulary> getById(final Long id) {
-        return vocabularyRepository.findById(id);
-    }
-
-    public void dropAndIgnore(final Vocabulary vocabulary) {
-        final File file = new File(ignoreFile);
-        try {
-            logger.info("vocabulary {} will be added to ignore list", vocabulary.getEn());
-            FileUtils.writeLines(file, Collections.singletonList(vocabulary.getEn()), true);
-        } catch (final IOException e) {
-            logger.error("error occurred while updating ignore file", e);
-        }
-        vocabularyRepository.delete(vocabulary);
-    }
 }
