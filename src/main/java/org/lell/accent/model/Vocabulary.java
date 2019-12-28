@@ -62,4 +62,14 @@ public class Vocabulary {
     public int hashCode() {
         return Objects.hash(en);
     }
+
+    @Override
+    public String toString() {
+        return "Vocabulary{" +
+                "id=" + id +
+                ", en='" + en + '\'' +
+                ", de='" + de + '\'' +
+                ", know=" + know +
+                '}';
+    }
 }
