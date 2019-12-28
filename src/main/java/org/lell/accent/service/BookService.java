@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +37,7 @@ public class BookService {
                 words.addAll(Arrays.asList(textFromPage.split("\\s+")));
             }
             pdfReader.close();
-        } catch (final Exception e) {
+        } catch (IOException e) {
             logger.error("error occurred while reading words from pdf file");
         }
         return String.join(" ", words);
