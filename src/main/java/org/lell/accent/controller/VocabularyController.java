@@ -5,14 +5,15 @@ import org.lell.accent.service.VocabularyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 //TODO: use DTO instead of JPA Entities
 
 @RestController
+@RequestMapping(path = "/api/vocabulary", produces = "application/json")
 public class VocabularyController {
 
     private static final Logger logger = LoggerFactory.getLogger(VocabularyController.class);
@@ -23,30 +24,25 @@ public class VocabularyController {
         this.vocabularyService = vocabularyService;
     }
 
-    @GetMapping("/vocabulary/all")
-    @ResponseStatus(HttpStatus.OK)
-    @CrossOrigin(origins = "http://localhost:4200")
-    public List<Vocabulary> allVocabularies() {
-        return vocabularyService.getAllDictionaries();
+    @GetMapping("/all")
+    public ResponseEntity<List<Vocabulary>> allVocabularies() {
+        return new ResponseEntity<>(vocabularyService.getAllDictionaries(), HttpStatus.OK);
     }
 
-    @PutMapping("/vocabulary/update")
-    @CrossOrigin(origins = "http://localhost:4200")
-    public Vocabulary updateVocabulary(@RequestBody final Vocabulary vocabulary) throws IOException {
+    @PutMapping(path = "/update", consumes = "application/json")
+    public ResponseEntity<Vocabulary> updateVocabulary(@RequestBody final Vocabulary vocabulary) {
         logger.info("Request received - update vocabulary {}", vocabulary);
         //TODO: handle not founded vocabularies
-        return vocabularyService.updateVocabulary(vocabulary);
+        return new ResponseEntity<>(vocabularyService.updateVocabulary(vocabulary), HttpStatus.OK);
     }
 
-    @PostMapping("/vocabulary/drop")
-    @CrossOrigin(origins = "http://localhost:4200")
+    @PutMapping("/drop")
     public void dropVocabulary(@RequestBody final Vocabulary vocabulary) {
-        logger.info("request for deleting and ignore vocabulary received for {}", vocabulary.getEn());
+        logger.info("request for deleting and ignore vocabulary received for {}", vocabulary);
         vocabularyService.dropAndIgnore(vocabulary);
     }
 
-    @GetMapping("/vocabulary/random")
-    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/random")
     public Vocabulary getRandomVocabulary() {
         //TODO: handle optional
         return vocabularyService.getRandomTranslated().orElseGet(Vocabulary::new);
