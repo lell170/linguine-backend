@@ -1,6 +1,7 @@
 package org.lell.accent.controller;
 
 import org.lell.accent.model.Vocabulary;
+import org.lell.accent.service.IgnoredService;
 import org.lell.accent.service.VocabularyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,14 +20,11 @@ public class VocabularyController {
     private static final Logger logger = LoggerFactory.getLogger(VocabularyController.class);
 
     private final VocabularyService vocabularyService;
+    private final IgnoredService ignoredService;
 
-    public VocabularyController(final VocabularyService vocabularyService) {
+    public VocabularyController(final VocabularyService vocabularyService, final IgnoredService ignoredService) {
+        this.ignoredService = ignoredService;
         this.vocabularyService = vocabularyService;
-    }
-
-    @GetMapping("/all")
-    public ResponseEntity<List<Vocabulary>> allVocabularies() {
-        return new ResponseEntity<>(vocabularyService.getAllDictionaries(), HttpStatus.OK);
     }
 
     @PutMapping(path = "/update", consumes = "application/json")
@@ -36,10 +34,10 @@ public class VocabularyController {
         return new ResponseEntity<>(vocabularyService.updateVocabulary(vocabulary), HttpStatus.OK);
     }
 
-    @PutMapping("/drop")
-    public void dropVocabulary(@RequestBody final Vocabulary vocabulary) {
-        logger.info("request for deleting and ignore vocabulary received for {}", vocabulary);
-        vocabularyService.dropAndIgnore(vocabulary);
+    @PostMapping("/ignore")
+    public void dropVocabulary(@RequestBody final Vocabulary vocabulary ) {
+        logger.info("ignore vocabulary {}", vocabulary);
+        ignoredService.ignoreVocabulary(vocabulary);
     }
 
     @GetMapping("/random")

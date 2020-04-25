@@ -9,10 +9,6 @@ public class Iwlinks {
 
     @JsonProperty("*")
     private String translation;
-
-    public Iwlinks() {
-    }
-
     public String getLanguage() {
         return language;
     }

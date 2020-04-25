@@ -13,7 +13,6 @@ public class Vocabulary {
     private long id;
     private String en;
     private String de;
-    private boolean know;
 
     public Vocabulary() {
     }
@@ -42,14 +41,6 @@ public class Vocabulary {
         this.de = de;
     }
 
-    public boolean isKnow() {
-        return know;
-    }
-
-    public void setKnow(final boolean know) {
-        this.know = know;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
@@ -69,7 +60,6 @@ public class Vocabulary {
                 "id=" + id +
                 ", en='" + en + '\'' +
                 ", de='" + de + '\'' +
-                ", know=" + know +
                 '}';
     }
 }

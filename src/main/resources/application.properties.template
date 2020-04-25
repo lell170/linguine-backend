@@ -2,12 +2,14 @@ spring.datasource.driver-class-name=org.postgresql.Driver
 spring.datasource.username=postgres
 spring.datasource.password=postgres
 spring.datasource.url=jdbc:postgresql://localhost:5432/accent
-spring.jpa.hibernate.ddl-auto=create-drop
+spring.jpa.hibernate.ddl-auto=update
 spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.PostgreSQL10Dialect
 
 spring.servlet.multipart.max-file-size=100MB
 spring.servlet.multipart.max-request-size=100MB
 
-ignore.file.path=var/ignore.txt
-google.translation.script=
-google.translation.key=
+google.translation.script=https://script.google.com/macros/s/AKfycbxkPyP.............
+google.translation.key=Sqt.........
+
+# spring profile
+spring.profiles.active=development

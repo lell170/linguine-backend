@@ -14,7 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
+/* ++++++++++++++++++++++++++++
+WIP. This controller is not used yet!
++++++++++++++++++++++++++++++++ */
 @RestController
 @RequestMapping(path = "/api/book", produces = "application/json")
 public class BookController {
@@ -43,6 +45,6 @@ public class BookController {
 
         final File file = fileService.createFileFromMultipartData(multipartFile, TMP_FILE_NAME);
         final Book book = bookService.createBook(bookName, file);
-        vocabularyService.addNewWords(book);
+        vocabularyService.addNewWordsFromBook(book);
     }
 }
