@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.lell</groupId>
-	<artifactId>accent</artifactId>
+	<artifactId>linguine</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>accent</name>
+	<name>linguine</name>
 
 	<properties>
 		<java.version>13</java.version>
