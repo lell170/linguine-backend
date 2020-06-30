@@ -1,5 +1,5 @@
 HELP.md
-../target/
+../../target/
 !linguine/.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**
 !**/src/test/**
@@ -33,4 +33,5 @@ build/
 
 src/main/resources/*.properties
 
-tmpFile
+/statistics/target/
+/linguine/target/
